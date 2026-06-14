@@ -130,9 +130,9 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
         window.history.pushState(null, '', '/');
       } else if (res.status === 404) {
         // Auto-provision profile on server side if authenticated via Supabase but missing in JSON database
-        const emailPrefix = loginEmail.split('@')[0];
-        const autoName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
-        const autoTeam = `${autoName} FC`;
+        const meta = data.session?.user?.user_metadata;
+        const autoName = meta?.display_name || loginEmail.split('@')[0].charAt(0).toUpperCase() + loginEmail.split('@')[0].slice(1);
+        const autoTeam = meta?.team_name || `${autoName} FC`;
         
         let registerRes;
         try {
