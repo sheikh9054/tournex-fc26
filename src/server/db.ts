@@ -184,7 +184,8 @@ export async function initSupabaseDb() {
           teamId: p.teamId,
           sport: p.sport,
           stats: p.stats,
-          achievements: p.achievements || []
+          achievements: p.achievements || [],
+          createdAt: p.createdAt || new Date().toISOString()
         })),
         tournaments: (tournaments || []).map(t => ({
           id: t.id,
