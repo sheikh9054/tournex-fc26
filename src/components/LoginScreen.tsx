@@ -106,13 +106,24 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
       }
 
       // 2) Sync and register/set active session in local/server DB
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail.trim(), password: loginPassword.trim() }),
-      });
+      let res;
+      try {
+        res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: loginEmail.trim(), password: loginPassword.trim() }),
+        });
+      } catch (fetchErr: any) {
+        throw new Error(`Failed to contact local backend auth service (${fetchErr.message || fetchErr}). Please ensure the server is fully started.`);
+      }
       
-      const resData = await res.json();
+      let resData;
+      try {
+        resData = await res.json();
+      } catch (jsonErr) {
+        throw new Error(`Server returned a non-JSON response (Status ${res.status}). This can occur if the backend database initialization is corrupt or crashed.`);
+      }
+
       if (res.ok && resData.success) {
         onLoginSuccess(resData.profile);
         // 3) Redirect user to Home page ("/")
@@ -123,17 +134,29 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
         const autoName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
         const autoTeam = `${autoName} FC`;
         
-        const registerRes = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            name: autoName, 
-            email: loginEmail.trim(),
-            teamName: autoTeam,
-            password: loginPassword.trim()
-          }),
-        });
-        const registerData = await registerRes.json();
+        let registerRes;
+        try {
+          registerRes = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              name: autoName, 
+              email: loginEmail.trim(),
+              teamName: autoTeam,
+              password: loginPassword.trim()
+            }),
+          });
+        } catch (regFetchErr: any) {
+          throw new Error(`Failed to auto-register backend profile: ${regFetchErr.message || regFetchErr}`);
+        }
+
+        let registerData;
+        try {
+          registerData = await registerRes.json();
+        } catch (regJsonErr) {
+          throw new Error(`Local backend registration endpoint crashed with Status ${registerRes.status}.`);
+        }
+
         if (registerRes.ok && registerData.success) {
           onLoginSuccess(registerData.profile);
           window.history.pushState(null, '', '/');
@@ -143,9 +166,9 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
       } else {
         setErrorMsg(resData.error || 'Invalid credentials or competitor profile.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErrorMsg('Database verification error.');
+      setErrorMsg(`Database verification error: ${err.message || String(err)}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -293,8 +316,32 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
 
         {/* Global Error Notice */}
         {errorMsg && (
-          <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-xl text-xs text-red-350 text-red-300 font-medium text-center">
-            ⚠️ {errorMsg}
+          <div className="space-y-3">
+            <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-xl text-xs text-red-300 font-medium text-center">
+              ⚠️ {errorMsg}
+            </div>
+
+            <div className="p-4 bg-indigo-950/20 border border-indigo-500/20 rounded-2xl text-[11px] text-zinc-300 space-y-2">
+              <span className="font-bold text-indigo-400 block uppercase tracking-wider text-[10px] font-mono">🔧 Supabase Environment & Setup Guide</span>
+              <p className="leading-relaxed">
+                If you are running your own Supabase database or encounter auth failures, verify these three critical setup points in your Supabase project:
+              </p>
+              <ol className="list-decimal list-inside space-y-1.5 text-zinc-400 text-[10px] pl-1">
+                <li>
+                  <strong className="text-zinc-200">Disable Email Confirmation:</strong> Go to your <span className="text-white">Supabase Dashboard &gt; Authentication &gt; Providers &gt; Email</span> and <strong>toggle off</strong> <span className="text-indigo-300">Confirm email</span>. This allows new signups to log in instantly without waiting for a confirmation email.
+                </li>
+                <li>
+                  <strong className="text-zinc-200">Set Environment Variables:</strong> Ensure you have provided your Supabase credentials in your server environment:
+                  <div className="bg-black/40 p-2 rounded border border-white/5 font-mono text-[9px] text-[#818cf8] mt-1 space-y-0.5">
+                    <div>VITE_SUPABASE_URL=your_project_url</div>
+                    <div>VITE_SUPABASE_ANON_KEY=your_anon_public_key</div>
+                  </div>
+                </li>
+                <li>
+                  <strong className="text-zinc-200">Load Database Tables:</strong> Open your <span className="text-white">Supabase SQL Editor</span>, paste the contents of the <code>supabase_schema.sql</code> file, and run it to create the required <code>profiles</code>, <code>teams</code>, and <code>players</code> tables.
+                </li>
+              </ol>
+            </div>
           </div>
         )}
 

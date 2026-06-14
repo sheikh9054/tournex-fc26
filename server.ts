@@ -1132,9 +1132,17 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Tournex Engine] Running full-stack SaaS server at http://localhost:${PORT}`);
-  });
+  // Only bind port if we are NOT on a serverless platform like Vercel
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[Tournex Engine] Running full-stack SaaS server at http://localhost:${PORT}`);
+    });
+  }
 }
 
-startServer();
+// Export the express server instance as the default export
+export default app;
+
+if (!process.env.VERCEL) {
+  startServer();
+}

@@ -405,7 +405,12 @@ export async function syncToSupabase(db: Database) {
 
 // Sync back to local db.json file
 function getLocalDb(): Database {
-  ensureDirectoryExistence(DB_FILE_PATH);
+  try {
+    ensureDirectoryExistence(DB_FILE_PATH);
+  } catch (err) {
+    console.warn("⚠️ Unable to access/create db.json directory structure:", err);
+  }
+
   if (!fs.existsSync(DB_FILE_PATH)) {
     const freshDb: Database = {
       profiles: DEFAULT_PROFILES,
@@ -418,7 +423,11 @@ function getLocalDb(): Database {
       activityLogs: DEFAULT_ACTIVITY_LOGS
     };
     prepopulateSeededMatches(freshDb);
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(freshDb, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(freshDb, null, 2), 'utf-8');
+    } catch (err) {
+      console.warn("⚠️ Unable to write fresh db.json:", err);
+    }
     return freshDb;
   }
   try {
@@ -446,7 +455,11 @@ function getLocalDb(): Database {
       activityLogs: DEFAULT_ACTIVITY_LOGS
     };
     prepopulateSeededMatches(recoveryDb);
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(recoveryDb, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(recoveryDb, null, 2), 'utf-8');
+    } catch (err) {
+      console.warn("⚠️ Unable to write recovery db.json:", err);
+    }
     return recoveryDb;
   }
 }
@@ -464,8 +477,12 @@ export function getDb(): Database {
 // Save database back to file
 export function saveDb(db: Database) {
   dbCache = db;
-  ensureDirectoryExistence(DB_FILE_PATH);
-  fs.writeFileSync(DB_FILE_PATH, JSON.stringify(db, null, 2), 'utf-8');
+  try {
+    ensureDirectoryExistence(DB_FILE_PATH);
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(db, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn("⚠️ Local disk is read-only or permission-denied. Continuing with cache & Supabase sync:", err);
+  }
   syncToSupabase(db);
 }
 
