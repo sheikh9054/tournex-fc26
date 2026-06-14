@@ -169,7 +169,15 @@ export async function initSupabaseDb() {
       const { data: activityLogs } = await supabase.from('activity_logs').select('*');
 
       dbCache = {
-        profiles: profiles || [],
+        profiles: (profiles || []).map(p => ({
+          id: p.id,
+          email: p.email || "",
+          name: p.name || "Anonymous Gamer",
+          role: p.role || "Player",
+          avatarUrl: p.avatarUrl || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(p.id)}`,
+          createdAt: p.createdAt || p.created_at || new Date().toISOString(),
+          password: p.password
+        })),
         teams: (teams || []).map(t => ({
           id: t.id,
           name: t.name,

@@ -107,7 +107,7 @@ app.post("/api/auth/login", (req, res) => {
     if (userId) {
       profile = db.profiles.find(p => p.id === userId);
     } else if (email) {
-      profile = db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+      profile = db.profiles.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
       if (profile && profile.password && profile.password !== password) {
         return res.status(401).json({ error: "Incorrect password." });
       }
@@ -121,7 +121,8 @@ app.post("/api/auth/login", (req, res) => {
     logActivity(profile.id, profile.name, "Signed In", "Logged in to the FC 26 platform.");
     res.json({ success: true, profile });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Crash during login handler execution:", err);
+    res.status(500).json({ error: err.message || "Internal auth handler crash." });
   }
 });
 
@@ -153,13 +154,16 @@ app.post("/api/auth/register", (req, res) => {
 
   try {
     const db = getDb();
-    const existing = db.profiles.find(p => p.email.toLowerCase() === email.toLowerCase() || p.name.toLowerCase() === name.toLowerCase());
+    const existing = db.profiles.find(p => 
+      (p.email && p.email.toLowerCase() === email.toLowerCase()) || 
+      (p.name && p.name.toLowerCase() === name.toLowerCase())
+    );
     if (existing) {
       return res.status(400).json({ error: "Gamer Tag or Email is already registered." });
     }
 
     const tName = teamName || `${name} FC`;
-    const existingTeam = db.teams.find(t => t.name.toLowerCase() === tName.toLowerCase());
+    const existingTeam = db.teams.find(t => t.name && t.name.toLowerCase() === tName.toLowerCase());
     if (existingTeam) {
       return res.status(400).json({ error: "Team or Club name is already taken." });
     }
