@@ -64,6 +64,8 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        localStorage.setItem('tournex_user_email', 'guest@tournex.gg');
+        localStorage.setItem('tournex_user_id', 'guest');
         onLoginSuccess(data.profile);
       } else {
         setErrorMsg(data.error || 'Failed to authorize guest session.');
@@ -125,6 +127,10 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
       }
 
       if (res.ok && resData.success) {
+        if (resData.profile) {
+          localStorage.setItem('tournex_user_email', resData.profile.email || '');
+          localStorage.setItem('tournex_user_id', resData.profile.id || '');
+        }
         onLoginSuccess(resData.profile);
         // 3) Redirect user to Home page ("/")
         window.history.pushState(null, '', '/');
@@ -158,6 +164,10 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
         }
 
         if (registerRes.ok && registerData.success) {
+          if (registerData.profile) {
+            localStorage.setItem('tournex_user_email', registerData.profile.email || '');
+            localStorage.setItem('tournex_user_id', registerData.profile.id || '');
+          }
           onLoginSuccess(registerData.profile);
           window.history.pushState(null, '', '/');
         } else {
@@ -187,6 +197,10 @@ export default function LoginScreen({ profiles, onLoginSuccess }: LoginScreenPro
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        if (data.profile) {
+          localStorage.setItem('tournex_user_email', data.profile.email || '');
+          localStorage.setItem('tournex_user_id', data.profile.id || '');
+        }
         onLoginSuccess(data.profile);
       } else {
         setErrorMsg(data.error || 'Failed to authenticate quick selector.');

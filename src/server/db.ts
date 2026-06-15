@@ -12,8 +12,8 @@ import {
   AVAILABLE_BADGES, UserRole, MatchTimelineEvent
 } from '../types';
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://mzoxyjtvpinvqgffiehh.supabase.co";
-const SUPABASE_PUBLIC_KEY = process.env.VITE_SUPABASE_ANON_KEY || "sb_publishable_y_vALGWKmf2pSVtKpsSgZQ_0BbcOouA";
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://mzoxyjtvpinvqgffiehh.supabase.co";
+const SUPABASE_PUBLIC_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "sb_publishable_y_vALGWKmf2pSVtKpsSgZQ_0BbcOouA";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
 
@@ -278,9 +278,10 @@ export async function initSupabaseDb() {
 
 // Synchronizer helper to write state to Supabase asynchronously
 export async function syncToSupabase(db: Database) {
+  // Profiles
   try {
     if (db.profiles.length > 0) {
-      await supabase.from('profiles').upsert(db.profiles.map(p => ({
+      const { error } = await supabase.from('profiles').upsert(db.profiles.map(p => ({
         id: p.id,
         email: p.email,
         name: p.name,
@@ -289,18 +290,32 @@ export async function syncToSupabase(db: Database) {
         createdAt: p.createdAt,
         password: p.password
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (profiles):", error);
+  }
+
+  // Teams
+  try {
     if (db.teams.length > 0) {
-      await supabase.from('teams').upsert(db.teams.map(t => ({
+      const { error } = await supabase.from('teams').upsert(db.teams.map(t => ({
         id: t.id,
         name: t.name,
         logoUrl: t.logoUrl,
         managerId: t.managerId,
         createdAt: t.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (teams):", error);
+  }
+
+  // Players
+  try {
     if (db.players.length > 0) {
-      await supabase.from('players').upsert(db.players.map(p => ({
+      const { error } = await supabase.from('players').upsert(db.players.map(p => ({
         id: p.id,
         name: p.name,
         photoUrl: p.photoUrl,
@@ -310,9 +325,16 @@ export async function syncToSupabase(db: Database) {
         achievements: p.achievements,
         createdAt: p.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (players):", error);
+  }
+
+  // Tournaments
+  try {
     if (db.tournaments.length > 0) {
-      await supabase.from('tournaments').upsert(db.tournaments.map(t => ({
+      const { error } = await supabase.from('tournaments').upsert(db.tournaments.map(t => ({
         id: t.id,
         name: t.name,
         sport: t.sport,
@@ -327,9 +349,16 @@ export async function syncToSupabase(db: Database) {
         thirdPlaceId: t.thirdPlaceId,
         createdAt: t.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (tournaments):", error);
+  }
+
+  // Leagues
+  try {
     if (db.leagues.length > 0) {
-      await supabase.from('leagues').upsert(db.leagues.map(l => ({
+      const { error } = await supabase.from('leagues').upsert(db.leagues.map(l => ({
         id: l.id,
         name: l.name,
         sport: l.sport,
@@ -340,9 +369,16 @@ export async function syncToSupabase(db: Database) {
         seasons: l.seasons,
         createdAt: l.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (leagues):", error);
+  }
+
+  // Matches
+  try {
     if (db.matches.length > 0) {
-      await supabase.from('matches').upsert(db.matches.map(m => ({
+      const { error } = await supabase.from('matches').upsert(db.matches.map(m => ({
         id: m.id,
         type: m.type,
         referenceId: m.referenceId,
@@ -370,9 +406,16 @@ export async function syncToSupabase(db: Database) {
         team2RedCards: m.team2RedCards,
         createdAt: m.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (matches):", error);
+  }
+
+  // Notifications
+  try {
     if (db.notifications.length > 0) {
-      await supabase.from('notifications').upsert(db.notifications.map(n => ({
+      const { error } = await supabase.from('notifications').upsert(db.notifications.map(n => ({
         id: n.id,
         user_id: n.userId,
         title: n.title,
@@ -381,9 +424,16 @@ export async function syncToSupabase(db: Database) {
         read: n.read,
         createdAt: n.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (notifications):", error);
+  }
+
+  // Activity Logs
+  try {
     if (db.activityLogs.length > 0) {
-      await supabase.from('activity_logs').upsert(db.activityLogs.map(l => ({
+      const { error } = await supabase.from('activity_logs').upsert(db.activityLogs.map(l => ({
         id: l.id,
         user_id: l.userId,
         user_name: l.userName,
@@ -391,9 +441,14 @@ export async function syncToSupabase(db: Database) {
         details: l.details,
         created_at: l.createdAt
       })));
+      if (error) throw error;
     }
+  } catch (error) {
+    console.warn("⚠️ Supabase Sync Warning (activity_logs):", error);
+  }
 
-    // Process deletions
+  // Process deletions
+  try {
     const teamIds = db.teams.map(t => t.id);
     const playerIds = db.players.map(p => p.id);
     const tournamentIds = db.tournaments.map(t => t.id);
@@ -405,9 +460,8 @@ export async function syncToSupabase(db: Database) {
     if (tournamentIds.length > 0) await supabase.from('tournaments').delete().not('id', 'in', `(${tournamentIds.join(',')})`);
     if (leagueIds.length > 0) await supabase.from('leagues').delete().not('id', 'in', `(${leagueIds.join(',')})`);
     if (matchIds.length > 0) await supabase.from('matches').delete().not('id', 'in', `(${matchIds.join(',')})`);
-
   } catch (error) {
-    console.error("⚠️ Supabase Sync Error during state upsert:", error);
+    console.warn("⚠️ Supabase Sync Warning (deletions):", error);
   }
 }
 
@@ -472,18 +526,37 @@ function getLocalDb(): Database {
   }
 }
 
+let initPromise: Promise<void> | null = null;
+
+// Synchronous and asynchronous database initialization guarantee
+export async function ensureDbInit(): Promise<void> {
+  if (dbCache) return;
+  if (!initPromise) {
+    initPromise = (async () => {
+      console.log("🛠️ Initializing local database cache...");
+      dbCache = getLocalDb();
+      try {
+        await initSupabaseDb();
+      } catch (err) {
+        console.error("❌ Failed to hydrate from Supabase during serverless setup:", err);
+      }
+    })();
+  }
+  await initPromise;
+}
+
 // Load database from file with mock seeding
 export function getDb(): Database {
   if (!dbCache) {
     dbCache = getLocalDb();
-    // Non-blocking background hydration from Supabase
+    // Non-blocking background hydration fallback
     initSupabaseDb();
   }
   return dbCache;
 }
 
-// Save database back to file
-export function saveDb(db: Database) {
+// Save database back to file (Fully awaited async execution for robust Serverless durability)
+export async function saveDb(db: Database): Promise<void> {
   dbCache = db;
   try {
     ensureDirectoryExistence(DB_FILE_PATH);
@@ -491,7 +564,7 @@ export function saveDb(db: Database) {
   } catch (err) {
     console.warn("⚠️ Local disk is read-only or permission-denied. Continuing with cache & Supabase sync:", err);
   }
-  syncToSupabase(db);
+  await syncToSupabase(db);
 }
 
 // Log action helper

@@ -12,7 +12,7 @@ import StatsDashboard from './components/StatsDashboard';
 import BracketsTab from './components/BracketsTab';
 import LeaguesTab from './components/LeaguesTab';
 import MatchesTab from './components/MatchesTab';
-import { supabase } from './supabaseClient';
+import { supabase, alignSupabaseConfig } from './supabaseClient';
 import { 
   Trophy, Sparkles, Gamepad2, Bell, RotateCcw, 
   ShieldAlert, Zap, Compass, SwatchBook, TrendingUp,
@@ -78,7 +78,11 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchDatabase();
+    const initApp = async () => {
+      await alignSupabaseConfig();
+      await fetchDatabase();
+    };
+    initApp();
     
     // Connect to genuine server-sent real-time channel
     const eventSource = new EventSource('/api/realtime');
@@ -99,6 +103,8 @@ export default function App() {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
+      localStorage.removeItem('tournex_user_email');
+      localStorage.removeItem('tournex_user_id');
       await fetch('/api/auth/logout', { method: 'POST' });
       setCurrentUser(null);
       setActiveTab('analytics');

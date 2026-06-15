@@ -5,13 +5,13 @@
 
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { 
   getDb, saveDb as originalSaveDb, logActivity, createNotification, 
   generateSingleElimination, generateDoubleElimination, 
   generateRoundRobin, generateSwissSystem, pairNextSwissRound,
-  generateLeagueFixtures, calculateStandings, updateRostersStatistics
+  generateLeagueFixtures, calculateStandings, updateRostersStatistics,
+  ensureDbInit
 } from "./src/server/db";
 import { 
   Team, Player, Tournament, League, Match, Season, 
@@ -60,20 +60,34 @@ const broadcastDbUpdate = () => {
   });
 };
 
-const saveDb = (dbData: any) => {
-  originalSaveDb(dbData);
+const saveDb = async (dbData: any) => {
+  await originalSaveDb(dbData);
   broadcastDbUpdate();
 };
 
 app.use(express.json());
 
+// Serverless Database Connection and Hydration Middleware
+app.use(async (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    try {
+      await ensureDbInit();
+    } catch (err: any) {
+      console.error("❌ Database initialization middleware encountered an error:", err);
+    }
+  }
+  next();
+});
+
 // Track current visual test session role for simulation
 let activeUserId = "";
 
 // Safe middleware to extract active user profile
-function getSimulatedUser() {
+function getSimulatedUser(req?: any) {
   const db = getDb();
-  if (activeUserId === "guest" || !activeUserId) {
+  const userId = req?.headers?.['x-user-id'] || activeUserId;
+  
+  if (userId === "guest" || !userId) {
     return { 
       id: "guest", 
       name: "Guest Viewer", 
@@ -83,7 +97,7 @@ function getSimulatedUser() {
       createdAt: new Date().toISOString()
     };
   }
-  const profile = db.profiles.find(p => p.id === activeUserId);
+  const profile = db.profiles.find(p => p.id === userId);
   return profile || { 
     id: "guest", 
     name: "Guest Viewer", 
@@ -146,7 +160,7 @@ app.post("/api/auth/guest", (req, res) => {
 });
 
 // Register custom gamer tag
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
   const { name, email, password, teamName } = req.body;
   if (!name || !email) {
     return res.status(400).json({ error: "Gamer Tag and email address required." });
@@ -207,7 +221,7 @@ app.post("/api/auth/register", (req, res) => {
     db.players.push(newGamerPlayer);
 
     activeUserId = newId;
-    saveDb(db);
+    await saveDb(db);
 
     logActivity(newId, name, "Registered Profile", `Registered gamer: ${name} representing team ${tName}`);
     createNotification("New Competitor Registered", `Welcome ${name} (${tName}) to the FC 26 competitive fields!`, 'success', newId);
@@ -227,7 +241,7 @@ app.post("/api/auth/logout", (req, res) => {
 // Admin command: update active privileges (Super Admin only!)
 app.post("/api/admin/privileges/update", (req, res) => {
   const { userId, role } = req.body;
-  const admin = getSimulatedUser();
+  const admin = getSimulatedUser(req);
 
   if (admin.role !== 'Super Admin') {
     return res.status(403).json({ error: "Access denied. Only Super Admin (Mike) possesses role delegation clearance." });
@@ -256,13 +270,22 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
+// Expose Serverless Supabase alignment configs
+app.get("/api/config", (req, res) => {
+  res.json({
+    supabaseUrl: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://mzoxyjtvpinvqgffiehh.supabase.co",
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "sb_publishable_y_vALGWKmf2pSVtKpsSgZQ_0BbcOouA"
+  });
+});
+
 // Sync full database state
 app.get("/api/db", (req, res) => {
   try {
     const db = getDb();
+    const resolvedUserId = req.headers['x-user-id'] || activeUserId;
     res.json({
       db,
-      currentUser: activeUserId ? getSimulatedUser() : null
+      currentUser: resolvedUserId ? getSimulatedUser(req) : null
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -272,16 +295,17 @@ app.get("/api/db", (req, res) => {
 // Legacy Role selector simulation wrapper (bridged)
 app.post("/api/profile/role", (req, res) => {
   const { role, name, email } = req.body;
+  const reqUserId = req.headers['x-user-id'] || activeUserId;
   try {
     const db = getDb();
-    let profile = db.profiles.find(p => p.id === activeUserId);
+    let profile = db.profiles.find(p => p.id === reqUserId);
     if (profile) {
       profile.role = role as UserRole;
       if (name) profile.name = name;
       if (email) profile.email = email;
       saveDb(db);
     }
-    res.json({ success: true, profile: getSimulatedUser() });
+    res.json({ success: true, profile: getSimulatedUser(req) });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -292,7 +316,7 @@ app.post("/api/profile/role", (req, res) => {
 // ------------------------------------------
 app.post("/api/teams", (req, res) => {
   const { name, logoUrl } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
   
   if (user.role === "Public Viewer" || user.role === "Player") {
     return res.status(403).json({ error: "Access denied. Insufficient role permissions." });
@@ -321,7 +345,7 @@ app.post("/api/teams", (req, res) => {
 app.put("/api/teams/:id", (req, res) => {
   const id = req.params.id;
   const { name, logoUrl } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer" || user.role === "Player") {
     return res.status(403).json({ error: "Unauthorized access list." });
@@ -345,7 +369,7 @@ app.put("/api/teams/:id", (req, res) => {
 
 app.delete("/api/teams/:id", (req, res) => {
   const id = req.params.id;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role !== "Super Admin" && user.role !== "League Admin" && user.role !== "Tournament Admin") {
     return res.status(403).json({ error: "Access denied." });
@@ -378,7 +402,7 @@ app.delete("/api/teams/:id", (req, res) => {
 // ------------------------------------------
 app.post("/api/players", (req, res) => {
   const { name, photoUrl, teamId, sport } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer" || user.role === "Player") {
     return res.status(403).json({ error: "Unauthorized action." });
@@ -413,7 +437,7 @@ app.post("/api/players", (req, res) => {
 app.put("/api/players/:id", (req, res) => {
   const id = req.params.id;
   const { name, photoUrl, teamId, sport } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer") {
     return res.status(403).json({ error: "Access denied." });
@@ -439,7 +463,7 @@ app.put("/api/players/:id", (req, res) => {
 
 app.delete("/api/players/:id", (req, res) => {
   const id = req.params.id;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer") {
     return res.status(403).json({ error: "Unauthorized operation." });
@@ -466,7 +490,7 @@ app.delete("/api/players/:id", (req, res) => {
 // ------------------------------------------
 app.post("/api/tournaments", (req, res) => {
   const { name, sport, type, teamIds, seeding } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer" || user.role === "Player" || user.role === "Team Manager") {
     return res.status(403).json({ error: "Only Tournament Admins and League/Super Admins can create tournaments." });
@@ -510,7 +534,7 @@ app.post("/api/tournaments", (req, res) => {
 app.post("/api/tournaments/:id/next-swiss-round", (req, res) => {
   const id = req.params.id;
   const { roundNumber } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -528,7 +552,7 @@ app.post("/api/tournaments/:id/next-swiss-round", (req, res) => {
 app.put("/api/tournaments/:id", (req, res) => {
   const id = req.params.id;
   const { name, status, championId } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -549,7 +573,7 @@ app.put("/api/tournaments/:id", (req, res) => {
 
 app.delete("/api/tournaments/:id", (req, res) => {
   const id = req.params.id;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer" || user.role === "Player") {
     return res.status(403).json({ error: "Access denied" });
@@ -579,7 +603,7 @@ app.delete("/api/tournaments/:id", (req, res) => {
 // ------------------------------------------
 app.post("/api/leagues", (req, res) => {
   const { name, sport, format, teamIds } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer" || user.role === "Player" || user.role === "Team Manager") {
     return res.status(403).json({ error: "Unauthorized access logic." });
@@ -616,7 +640,7 @@ app.post("/api/leagues", (req, res) => {
 app.post("/api/leagues/:id/seasons", (req, res) => {
   const leagueId = req.params.id;
   const { seasonName } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -655,7 +679,7 @@ app.post("/api/leagues/:id/seasons", (req, res) => {
 
 app.delete("/api/leagues/:id", (req, res) => {
   const id = req.params.id;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -686,7 +710,7 @@ app.delete("/api/leagues/:id", (req, res) => {
 // Create Casual Friendly match
 app.post("/api/matches", (req, res) => {
   const { team1Id, team2Id, status, scheduledTime } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -722,7 +746,7 @@ app.put("/api/matches/:id", (req, res) => {
     team1Score, team2Score, status, notes, mvpId, 
     team1YellowCards, team1RedCards, team2YellowCards, team2RedCards 
   } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   if (user.role === "Public Viewer") {
     return res.status(403).json({ error: "Access denied. Action strictly forbidden." });
@@ -824,7 +848,7 @@ app.put("/api/matches/:id", (req, res) => {
 app.post("/api/matches/:id/timeline", (req, res) => {
   const id = req.params.id;
   const { type, minute, player1Id, player2Id, teamId } = req.body;
-  const user = getSimulatedUser();
+  const user = getSimulatedUser(req);
 
   try {
     const db = getDb();
@@ -1123,6 +1147,7 @@ app.post("/api/ai/summarize-league", async (req, res) => {
 async function startServer() {
   // Vite dev server mounting or static file delivery
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

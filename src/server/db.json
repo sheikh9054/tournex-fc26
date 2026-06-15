@@ -1,0 +1,501 @@
+{
+  "profiles": [
+    {
+      "id": "u1",
+      "email": "bigmike9054@gmail.com",
+      "name": "Mike (Super Admin)",
+      "role": "Super Admin",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=mike"
+    },
+    {
+      "id": "u2",
+      "email": "tekkz@fc26.gg",
+      "name": "Tekkz Ape",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=tekkz"
+    },
+    {
+      "id": "u3",
+      "email": "nicolas@fc26.gg",
+      "name": "Nicolas99fc",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=nicolas"
+    },
+    {
+      "id": "u4",
+      "email": "dhillon@fc26.gg",
+      "name": "Dhillon",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=dhillon"
+    },
+    {
+      "id": "u5",
+      "email": "viper@fc26.gg",
+      "name": "Viper",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=viper"
+    },
+    {
+      "id": "u6",
+      "email": "slayer@fc26.gg",
+      "name": "Slayer",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=slayer"
+    },
+    {
+      "id": "u7",
+      "email": "phantom@fc26.gg",
+      "name": "Phant0m",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=phantom"
+    },
+    {
+      "id": "u8",
+      "email": "zeus@fc26.gg",
+      "name": "Zeus",
+      "role": "Player",
+      "createdAt": "2026-06-14T18:19:05.213Z",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=zeus"
+    },
+    {
+      "id": "gamer_1pvu3p2o2",
+      "email": "test5870@example.com",
+      "name": "Gamer702",
+      "role": "Player",
+      "avatarUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=Gamer702",
+      "createdAt": "2026-06-14T18:24:47.731Z",
+      "password": "password123"
+    }
+  ],
+  "teams": [
+    {
+      "id": "u1",
+      "name": "Mike (Super Admin)",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=mike",
+      "createdAt": "2026-06-14T18:19:05.213Z"
+    },
+    {
+      "id": "u2",
+      "name": "Tekkz Ape",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=tekkz",
+      "createdAt": "2026-06-14T18:19:05.213Z"
+    },
+    {
+      "id": "u3",
+      "name": "Nicolas99fc",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=nicolas",
+      "createdAt": "2026-06-14T18:19:05.213Z"
+    },
+    {
+      "id": "u4",
+      "name": "Dhillon",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=dhillon",
+      "createdAt": "2026-06-14T18:19:05.213Z"
+    },
+    {
+      "id": "u5",
+      "name": "Viper",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=viper",
+      "createdAt": "2026-06-14T18:19:05.213Z"
+    },
+    {
+      "id": "u6",
+      "name": "Slayer",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=slayer",
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    },
+    {
+      "id": "u7",
+      "name": "Phant0m",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=phantom",
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    },
+    {
+      "id": "u8",
+      "name": "Zeus",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=zeus",
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    },
+    {
+      "id": "gamer_1pvu3p2o2",
+      "name": "Team905",
+      "logoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=Gamer702",
+      "createdAt": "2026-06-14T18:24:47.731Z"
+    }
+  ],
+  "players": [
+    {
+      "id": "u1",
+      "name": "Mike",
+      "teamId": "u1",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 5,
+        "wins": 3,
+        "draws": 1,
+        "losses": 1,
+        "goalsScored": 12,
+        "goalsAssisted": 5,
+        "goalsConceded": 6,
+        "cleanSheets": 2,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 1,
+        "winPercentage": 60
+      },
+      "achievements": [
+        "mvp"
+      ]
+    },
+    {
+      "id": "u2",
+      "name": "Tekkz Ape",
+      "teamId": "u2",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 5,
+        "wins": 4,
+        "draws": 0,
+        "losses": 1,
+        "goalsScored": 18,
+        "goalsAssisted": 9,
+        "goalsConceded": 8,
+        "cleanSheets": 1,
+        "yellowCards": 1,
+        "redCards": 0,
+        "mvpAwards": 3,
+        "winPercentage": 80
+      },
+      "achievements": [
+        "top-scorer",
+        "streak-10",
+        "mvp"
+      ]
+    },
+    {
+      "id": "u3",
+      "name": "Nicolas99fc",
+      "teamId": "u3",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 5,
+        "wins": 3,
+        "draws": 1,
+        "losses": 1,
+        "goalsScored": 15,
+        "goalsAssisted": 7,
+        "goalsConceded": 10,
+        "cleanSheets": 1,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 1,
+        "winPercentage": 60
+      },
+      "achievements": [
+        "assist-king"
+      ]
+    },
+    {
+      "id": "u4",
+      "name": "Dhillon",
+      "teamId": "u4",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 5,
+        "wins": 2,
+        "draws": 0,
+        "losses": 3,
+        "goalsScored": 9,
+        "goalsAssisted": 3,
+        "goalsConceded": 12,
+        "cleanSheets": 1,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 40
+      },
+      "achievements": []
+    },
+    {
+      "id": "u5",
+      "name": "Viper",
+      "teamId": "u5",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 4,
+        "wins": 2,
+        "draws": 0,
+        "losses": 2,
+        "goalsScored": 8,
+        "goalsAssisted": 4,
+        "goalsConceded": 8,
+        "cleanSheets": 1,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 50
+      },
+      "achievements": []
+    },
+    {
+      "id": "u6",
+      "name": "Slayer",
+      "teamId": "u6",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 4,
+        "wins": 1,
+        "draws": 1,
+        "losses": 2,
+        "goalsScored": 6,
+        "goalsAssisted": 2,
+        "goalsConceded": 9,
+        "cleanSheets": 0,
+        "yellowCards": 1,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 25
+      },
+      "achievements": []
+    },
+    {
+      "id": "u7",
+      "name": "Phant0m",
+      "teamId": "u7",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 4,
+        "wins": 1,
+        "draws": 1,
+        "losses": 2,
+        "goalsScored": 5,
+        "goalsAssisted": 1,
+        "goalsConceded": 7,
+        "cleanSheets": 0,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 25
+      },
+      "achievements": []
+    },
+    {
+      "id": "u8",
+      "name": "Zeus",
+      "teamId": "u8",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:19:05.214Z",
+      "stats": {
+        "matchesPlayed": 4,
+        "wins": 1,
+        "draws": 0,
+        "losses": 3,
+        "goalsScored": 4,
+        "goalsAssisted": 1,
+        "goalsConceded": 10,
+        "cleanSheets": 0,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 25
+      },
+      "achievements": []
+    },
+    {
+      "id": "gamer_1pvu3p2o2",
+      "name": "Gamer702",
+      "photoUrl": "https://api.dicebear.com/7.x/pixel-art/svg?seed=Gamer702",
+      "teamId": "gamer_1pvu3p2o2",
+      "sport": "FC 26",
+      "createdAt": "2026-06-14T18:24:47.731Z",
+      "stats": {
+        "matchesPlayed": 0,
+        "wins": 0,
+        "draws": 0,
+        "losses": 0,
+        "goalsScored": 0,
+        "goalsAssisted": 0,
+        "goalsConceded": 0,
+        "cleanSheets": 0,
+        "yellowCards": 0,
+        "redCards": 0,
+        "mvpAwards": 0,
+        "winPercentage": 0
+      },
+      "achievements": []
+    }
+  ],
+  "tournaments": [],
+  "leagues": [],
+  "matches": [
+    {
+      "id": "m_seed_1",
+      "type": "Friendly",
+      "team1Id": "u2",
+      "team2Id": "u3",
+      "team1Score": 4,
+      "team2Score": 3,
+      "status": "Completed",
+      "scheduledTime": "2026-06-12T18:19:11.093Z",
+      "durationMinutes": 12,
+      "timeline": [
+        {
+          "id": "e1",
+          "type": "Goal",
+          "minute": 15,
+          "teamId": "u2",
+          "player1Id": "u2"
+        },
+        {
+          "id": "e2",
+          "type": "Goal",
+          "minute": 30,
+          "teamId": "u3",
+          "player1Id": "u3"
+        },
+        {
+          "id": "e3",
+          "type": "Goal",
+          "minute": 45,
+          "teamId": "u2",
+          "player1Id": "u2"
+        },
+        {
+          "id": "e4",
+          "type": "Goal",
+          "minute": 60,
+          "teamId": "u3",
+          "player1Id": "u3"
+        },
+        {
+          "id": "e5",
+          "type": "Goal",
+          "minute": 75,
+          "teamId": "u3",
+          "player1Id": "u3"
+        },
+        {
+          "id": "e6",
+          "type": "Goal",
+          "minute": 82,
+          "teamId": "u2",
+          "player1Id": "u2"
+        },
+        {
+          "id": "e7",
+          "type": "Goal",
+          "minute": 90,
+          "teamId": "u2",
+          "player1Id": "u2"
+        }
+      ],
+      "mvpId": "u2",
+      "notes": "Legendary FC 26 battle! Tekkz claims a 4-3 comeback victory under pressure.",
+      "createdAt": "2026-06-14T18:19:11.093Z"
+    },
+    {
+      "id": "m_seed_2",
+      "type": "Friendly",
+      "team1Id": "u1",
+      "team2Id": "u4",
+      "team1Score": 2,
+      "team2Score": 1,
+      "status": "Completed",
+      "scheduledTime": "2026-06-10T18:19:11.093Z",
+      "durationMinutes": 12,
+      "timeline": [
+        {
+          "id": "e8",
+          "type": "Goal",
+          "minute": 35,
+          "teamId": "u1",
+          "player1Id": "u1"
+        },
+        {
+          "id": "e9",
+          "type": "Goal",
+          "minute": 55,
+          "teamId": "u4",
+          "player1Id": "u4"
+        },
+        {
+          "id": "e10",
+          "type": "Goal",
+          "minute": 78,
+          "teamId": "u1",
+          "player1Id": "u1"
+        }
+      ],
+      "mvpId": "u1",
+      "notes": "Mike displays tactical masterclass with high-intensity build up play.",
+      "createdAt": "2026-06-14T18:19:11.093Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "n_gcubtqwjh",
+      "userId": "gamer_1pvu3p2o2",
+      "title": "New Competitor Registered",
+      "message": "Welcome Gamer702 (Team905) to the FC 26 competitive fields!",
+      "type": "success",
+      "read": false,
+      "createdAt": "2026-06-14T18:24:47.732Z"
+    },
+    {
+      "id": "n1",
+      "title": "Welcome to TOURNEX FC 26!",
+      "message": "The ultimate privilege-secured battle ground for competitive gamers is live.",
+      "type": "success",
+      "read": false,
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    },
+    {
+      "id": "n2",
+      "title": "Super Admin Hierarchy Initialized",
+      "message": "Owner Mike has established strict roles. Submit requests to unlock bracket administration.",
+      "type": "info",
+      "read": false,
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    }
+  ],
+  "activityLogs": [
+    {
+      "id": "log_0vqzwht7g",
+      "userId": "gamer_1pvu3p2o2",
+      "userName": "Gamer702",
+      "action": "Registered Profile",
+      "details": "Registered gamer: Gamer702 representing team Team905",
+      "createdAt": "2026-06-14T18:24:47.731Z"
+    },
+    {
+      "id": "log_hiyvm2nqz",
+      "userId": "u1",
+      "userName": "Mike (Super Admin)",
+      "action": "Signed In",
+      "details": "Logged in to the FC 26 platform.",
+      "createdAt": "2026-06-14T18:24:32.130Z"
+    },
+    {
+      "id": "a1",
+      "userId": "u1",
+      "userName": "Mike (Super Admin)",
+      "action": "System Init",
+      "details": "Initialized EA Sports FC 26 gamer records, roles, and default achievements.",
+      "createdAt": "2026-06-14T18:19:05.214Z"
+    }
+  ]
+}

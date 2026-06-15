@@ -141,36 +141,36 @@ ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
 
--- Create Policies to grant read access to anyone (Public Selector/Guest) and write access to authenticated users
+-- Create Policies to grant read access to anyone (Public Selector/Guest) and write access to authenticated users and backend sync
 
 -- Profiles
 CREATE POLICY "Allow public select on profiles" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on profiles" ON public.profiles FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on profiles" ON public.profiles FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Teams
 CREATE POLICY "Allow public select on teams" ON public.teams FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on teams" ON public.teams FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on teams" ON public.teams FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Players
 CREATE POLICY "Allow public select on players" ON public.players FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on players" ON public.players FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on players" ON public.players FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Tournaments
 CREATE POLICY "Allow public select on tournaments" ON public.tournaments FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on tournaments" ON public.tournaments FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on tournaments" ON public.tournaments FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Leagues
 CREATE POLICY "Allow public select on leagues" ON public.leagues FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on leagues" ON public.leagues FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on leagues" ON public.leagues FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Matches
 CREATE POLICY "Allow public select on matches" ON public.matches FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on matches" ON public.matches FOR ALL TO authenticated USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on matches" ON public.matches FOR ALL USING (auth.uid() = user_id OR user_id IS NULL) WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Notifications
 CREATE POLICY "Allow public select on notifications" ON public.notifications FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on notifications" ON public.notifications FOR ALL TO authenticated USING (auth.uid() = auth_user_id OR auth_user_id IS NULL) WITH CHECK (auth.uid() = auth_user_id OR auth_user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on notifications" ON public.notifications FOR ALL USING (auth.uid() = auth_user_id OR auth_user_id IS NULL) WITH CHECK (auth.uid() = auth_user_id OR auth_user_id IS NULL);
 
 -- Activity Logs
 CREATE POLICY "Allow public select on activity_logs" ON public.activity_logs FOR SELECT USING (true);
-CREATE POLICY "Allow write access for authenticated users on activity_logs" ON public.activity_logs FOR ALL TO authenticated USING (auth.uid() = auth_user_id OR auth_user_id IS NULL) WITH CHECK (auth.uid() = auth_user_id OR auth_user_id IS NULL);
+CREATE POLICY "Allow write access for authenticated users and backend on activity_logs" ON public.activity_logs FOR ALL USING (auth.uid() = auth_user_id OR auth_user_id IS NULL) WITH CHECK (auth.uid() = auth_user_id OR auth_user_id IS NULL);
